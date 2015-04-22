@@ -43,6 +43,17 @@ public final class MainActivity extends Activity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        menu.add("Enable DSpec")
+                .setCheckable(true)
+                .setChecked(mDesignSpecLayout.getDesignSpec().isDesignSpecEnabled())
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override public boolean onMenuItemClick(MenuItem item) {
+                        boolean checked = !item.isChecked();
+                        item.setChecked(checked);
+                        mDesignSpecLayout.getDesignSpec().setDesignSpecEnabled(checked);
+                        return true;
+                    }
+                });
         menu.add(getString(R.string.show_baseline_grid))
                 .setCheckable(true)
                 .setChecked(mDesignSpecLayout.getDesignSpec().isBaselineGridVisible())

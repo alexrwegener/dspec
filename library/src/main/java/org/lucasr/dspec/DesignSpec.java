@@ -16,24 +16,20 @@
 
 package org.lucasr.dspec;
 
-import android.content.Context;
 import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.ColorFilter;
 import android.graphics.Paint;
 import android.graphics.PixelFormat;
-import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
 import android.view.View;
-
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * Draw a baseline grid, keylines, and spacing markers on top of a {@link View}.
@@ -118,6 +114,7 @@ import java.util.List;
  * @see #fromResource(View, int)
  */
 public class DesignSpec extends Drawable {
+    private static final boolean DEFAULT_DESIGN_SPEC_ENABLED = true;
     private static final boolean DEFAULT_BASELINE_GRID_VISIBLE = false;
     private static final boolean DEFAULT_KEYLINES_VISIBLE = true;
     private static final boolean DEFAULT_SPACINGS_VISIBLE = true;
@@ -215,6 +212,8 @@ public class DesignSpec extends Drawable {
 
     private final float mDensity;
 
+    private boolean mDesignSpecEnabled = DEFAULT_DESIGN_SPEC_ENABLED;
+
     private boolean mBaselineGridVisible = DEFAULT_BASELINE_GRID_VISIBLE;
     private float mBaselineGridCellSize;
     private final Paint mBaselineGridPaint;
@@ -248,10 +247,31 @@ public class DesignSpec extends Drawable {
     }
 
     /**
+     * Whether or not the design spec is enabled.
+     */
+    public boolean isDesignSpecEnabled() {
+        return mDesignSpecEnabled;
+    }
+
+    /**
+     * Enables or disables design spec.
+     */
+    public DesignSpec setDesignSpecEnabled(boolean enabled) {
+        if (mDesignSpecEnabled == enabled) {
+            return this;
+        }
+
+        mDesignSpecEnabled = enabled;
+        invalidateSelf();
+
+        return this;
+    }
+
+    /**
      * Whether or not the baseline grid should be drawn.
      */
     public boolean isBaselineGridVisible() {
-        return mBaselineGridVisible;
+        return mDesignSpecEnabled && mBaselineGridVisible;
     }
 
     /**
@@ -301,7 +321,7 @@ public class DesignSpec extends Drawable {
      * Whether or not the keylines should be drawn.
      */
     public boolean areKeylinesVisible() {
-        return mKeylinesVisible;
+        return mDesignSpecEnabled && mKeylinesVisible;
     }
 
     /**
@@ -349,7 +369,7 @@ public class DesignSpec extends Drawable {
      * Whether or not the spacing markers should be drawn.
      */
     public boolean areSpacingsVisible() {
-        return mSpacingsVisible;
+        return mDesignSpecEnabled && mSpacingsVisible;
     }
 
     /**
@@ -394,7 +414,7 @@ public class DesignSpec extends Drawable {
     }
 
     private void drawBaselineGrid(Canvas canvas) {
-        if (!mBaselineGridVisible) {
+        if (!isBaselineGridVisible()) {
             return;
         }
 
@@ -415,7 +435,7 @@ public class DesignSpec extends Drawable {
     }
 
     private void drawKeylines(Canvas canvas) {
-        if (!mKeylinesVisible) {
+        if (!areKeylinesVisible()) {
             return;
         }
 
@@ -470,7 +490,7 @@ public class DesignSpec extends Drawable {
     }
 
     private void drawSpacings(Canvas canvas) {
-        if (!mSpacingsVisible) {
+        if (!areSpacingsVisible()) {
             return;
         }
 
